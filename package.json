@@ -1,0 +1,1 @@
+{"name":"4friends-checkout","private":true,"type":"module","scripts":{"test":"node --test","build":"node --check netlify/functions/checkout.mjs && node --check netlify/functions/webhook.mjs && node --check netlify/functions/status.mjs"},"dependencies":{"postgres":"^3.4.7"},"engines":{"node":">=22"}}
