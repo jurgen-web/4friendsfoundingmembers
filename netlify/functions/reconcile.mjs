@@ -1,3 +1,4 @@
+import {queueEmails} from './email-templates.mjs';
 import {db,mollie,lock} from './shared.mjs';
 import {verifiedPayment} from './domain.mjs';
 export async function reconcile(id,mode){
@@ -15,6 +16,7 @@ export async function reconcile(id,mode){
  if(next>100)throw Error('Handmatige opvolging vereist');number=next;
  }
  const [updated]=await tx`UPDATE fm_orders SET state=${p.status},member_number=${number},paid_at=${p.paidAt||null},updated_at=now() WHERE id=${order.id} RETURNING *`;
+ if(number && mode==='live') await queueEmails(tx,updated);
  return updated;
  });
 }

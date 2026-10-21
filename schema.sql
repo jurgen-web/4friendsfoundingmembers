@@ -8,3 +8,17 @@ CREATE TABLE IF NOT EXISTS fm_orders (
 );
 CREATE INDEX IF NOT EXISTS fm_capacity ON fm_orders(mode,state);
 -- No browser access or public REST access to this table. DATABASE_URL is server-only.
+
+CREATE TABLE IF NOT EXISTS fm_email_outbox (
+ order_id uuid NOT NULL REFERENCES fm_orders(id),
+ kind text NOT NULL CHECK(kind IN ('customer','owner')),
+ payload jsonb NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ first_attempt_at timestamptz,
+ next_attempt_at timestamptz NOT NULL DEFAULT now(),
+ attempts integer NOT NULL DEFAULT 0,
+ sent_at timestamptz,
+ resend_id text,
+ last_error text,
+ PRIMARY KEY(order_id,kind)
+);
